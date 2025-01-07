@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     ports:
-      - "8085:80"
+      - "8085:9000"
     volumes:
       - ./app:/var/www/html/app
       - ./public:/var/www/html/public
@@ -29,7 +29,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres:/docker-entrypoint-initdb.d
