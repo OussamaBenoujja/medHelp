@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-500 to-purple-600 flex justify-center items-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-2xl w-96 transform transition-all hover:scale-105">
+        <div class="text-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-800">Create an Account</h2>
+            <p class="text-gray-600">Join us today!</p>
+        </div>
+
+        <form id="registerForm" class="space-y-4" action="/register" method="POST" enctype="multipart/form-data">
+            <!-- FULL NAME -->
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" name="first_name" placeholder="First Name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <input type="text" name="last_name" placeholder="Last Name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+
+            <!-- EMAIL & PASSWORD -->
+            <input type="email" name="email" placeholder="Email" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            <input type="password" name="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+
+            <!-- DATE OF BIRTH -->
+            <label class="block text-sm font-medium text-gray-700">Birthdate:</label>
+            <input type="date" name="birthdate" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+
+            <!-- ROLE SELECTION -->
+            <label class="block text-sm font-medium text-gray-700">Register as:</label>
+            <select name="role" id="roleSelect" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <option value="" disabled selected>Select Role</option>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+            </select>
+
+            <!-- PATIENT-SPECIFIC FIELD -->
+            <div id="patientFields" class="hidden space-y-4">
+                <input type="text" name="insurance_number" placeholder="Insurance Number" id="insuranceInput" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+
+            <!-- DOCTOR-SPECIFIC FIELDS -->
+            <div id="doctorFields" class="hidden space-y-4">
+                <input type="text" name="specialty" placeholder="Specialty" id="specialtyInput" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <input type="text" name="license_number" placeholder="License Number" id="licenseInput" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <input type="number" name="years_experience" placeholder="Years of Experience" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <input type="number" name="consultation_fee" placeholder="Consultation Fee ($)" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <label class="block text-sm font-medium text-gray-700">Available Days:</label>
+                <select name="available_days[]" multiple class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+                <label class="block text-sm font-medium text-gray-700">Start Time:</label>
+                <input type="time" name="start_time" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                <label class="block text-sm font-medium text-gray-700">End Time:</label>
+                <input type="time" name="end_time" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-all">Register</button>
+        </form>
+
+        <!-- ERROR MESSAGE -->
+        <p class="text-red-500 text-sm mt-4 text-center hidden" id="errorMsg"></p>
+
+        <!-- LOGIN LINK -->
+        <div class="text-center mt-6">
+            <p class="text-gray-600">Already have an account? <a href="/login" class="text-blue-600 hover:underline">Login here</a></p>
+        </div>
+    </div>
+
+    
+    <script>
+        document.getElementById("roleSelect").addEventListener("change", function() {
+            if (this.value === "patient") {
+                document.getElementById("patientFields").classList.remove("hidden");
+                document.getElementById("doctorFields").classList.add("hidden");
+                document.getElementById("insuranceInput").required = true;
+                document.getElementById("specialtyInput").required = false;
+                document.getElementById("licenseInput").required = false;
+            } else if (this.value === "doctor") {
+                document.getElementById("doctorFields").classList.remove("hidden");
+                document.getElementById("patientFields").classList.add("hidden");
+                document.getElementById("insuranceInput").required = false;
+                document.getElementById("specialtyInput").required = true;
+                document.getElementById("licenseInput").required = true;
+            }
+        });
+
+        
+        document.getElementById("registerForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            let formData = new FormData(this);
+
+            fetch("/register", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "/";
+                } else {
+                    document.getElementById("errorMsg").innerText = data.error;
+                    document.getElementById("errorMsg").classList.remove("hidden");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
