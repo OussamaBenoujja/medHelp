@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    ports:
+      - "8085:80"
+    volumes:
+      - ./app:/var/www/html/app
+      - ./public:/var/www/html/public
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    command: >
+      bash -c "chown -R www-data:www-data /var/www/html &&
+               chmod -R 755 /var/www/html &&
+               service apache2 restart &&
+               apache2-foreground"
+
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
