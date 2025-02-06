@@ -10,6 +10,8 @@ services:
     volumes:
       - ./app:/var/www/html/app
       - ./public:/var/www/html/public
+      - ./vendor:/var/www/html/vendor
+      - ./index.php:/var/www/html/index.php
     depends_on:
       - db
     environment:
@@ -17,11 +19,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-    command: >
-      bash -c "chown -R www-data:www-data /var/www/html &&
-               chmod -R 755 /var/www/html &&
-               service apache2 restart &&
-               apache2-foreground"
+    command: apache2-foreground
 
   db:
     image: postgres:13
@@ -34,7 +32,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/postgres:/docker-entrypoint-initdb.d
 
 volumes:
   postgres_data:

@@ -13,7 +13,7 @@ class UserController {
     public function register($firstName, $lastName, $email, $password, $role) {
         try {
             $user = $this->userService->registerUser($firstName, $lastName, $email, $password, $role);
-            echo "User registered successfully: " . $user->getFirstName();
+            echo showSweetAlert('Welcome', "Register successful: " . $user->getFirstName(), 'success');
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
         }
@@ -22,9 +22,19 @@ class UserController {
     public function login($email, $password) {
         $user = $this->userService->loginUser($email, $password);
         if ($user) {
-            echo "Login successful: " . $user->getFirstName();
+            echo showSweetAlert('Welcome', "Login successful: " . $user->getFirstName(), 'success');
         } else {
-            echo "Invalid credentials.";
+            echo showSweetAlert('Error', "Invalid Credentials", 'error');
         }
+    }
+
+
+    function showSweetAlert($title, $text, $icon = 'success') {
+        return <<<EOT
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire('{$title}', '{$text}', '{$icon}');
+    </script>
+    EOT;
     }
 }

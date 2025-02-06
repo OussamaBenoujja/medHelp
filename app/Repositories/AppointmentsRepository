@@ -1,41 +1,7 @@
 <?php
-namespace App\Repositories;
 
-use PDO;
-use App\Models\Appointment;
 
-class AppointmentRepository {
-    private $pdo;
-
-    public function __construct(PDO $pdo) {
-        $this->pdo = $pdo;
-    }
-
-    public function save(Appointment $appointment): void {
-        $stmt = $this->pdo->prepare("INSERT INTO appointments (patient_id, doctor_id, appointment_date, status, reason) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $appointment->getPatientId(),
-            $appointment->getDoctorId(),
-            $appointment->getAppointmentDate(),
-            $appointment->getStatus(),
-            $appointment->getReason()
-        ]);
-    }
-
-    public function findAllByPatientId($patientId): array {
-        $stmt = $this->pdo->prepare("SELECT * FROM appointments WHERE patient_id = :patient_id");
-        $stmt->execute(['patient_id' => $patientId]);
-        $appointments = [];
-        while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $appointments[] = new Appointment(
-                $data['id'],
-                $data['patient_id'],
-                $data['doctor_id'],
-                $data['appointment_date'],
-                $data['status'],
-                $data['reason']
-            );
-        }
-        return $appointments;
-    }
+class AppointmentsRepository
+{
+    
 }

@@ -3,21 +3,22 @@ namespace App\Models;
 
 class User {
 
-    
     private $id;
     private $firstName;
     private $lastName;
     private $email;
     private $password;
     private $role;
+    private $PDO;
 
-    public function __construct($id = null, $firstName, $lastName, $email, $password, $role) {
+    public function __construct(PDO $PDO, $id = null, $firstName, $lastName, $email, $password, $role) {
         $this->id = $id;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
         $this->password = $password;
         $this->role = $role;
+        $this->pdo = $PDO;
     }
 
     // Getters and Setters
@@ -33,4 +34,6 @@ class User {
     public function setPassword($password) { $this->password = $password; }
     public function getRole() { return $this->role; }
     public function setRole($role) { $this->role = $role; }
+
+    
 }

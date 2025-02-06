@@ -5,12 +5,16 @@ class Doctor extends User {
     private $specialization;
     private $licenseNumber;
     private $experienceYears;
+    private $appointments = [];
+    private $PDO;
 
-    public function __construct($id = null, $firstName, $lastName, $email, $password, $role, $specialization, $licenseNumber, $experienceYears) {
+    public function __construct(PDO $PDO, $id = null, $firstName, $lastName, $email, $password, $role, $specialization, $licenseNumber, $experienceYears, $appointments = []) {
         parent::__construct($id, $firstName, $lastName, $email, $password, $role);
         $this->specialization = $specialization;
         $this->licenseNumber = $licenseNumber;
         $this->experienceYears = $experienceYears;
+        $this->appointments = $appointments;
+        $this->pdo = $PDO;
     }
 
     // Getters and Setters
@@ -20,4 +24,8 @@ class Doctor extends User {
     public function setLicenseNumber($licenseNumber) { $this->licenseNumber = $licenseNumber; }
     public function getExperienceYears() { return $this->experienceYears; }
     public function setExperienceYears($experienceYears) { $this->experienceYears = $experienceYears; }
+    public function getAppointments() { return $this->appointments; }
+    public function setAppointments($appointments) { $this->appointments = $appointments; }
+
+
 }
